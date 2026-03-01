@@ -16,12 +16,12 @@ router.post("/perdoruesi", async (req, res) => {
     ).toString();
 
     const user = await Perdorues.findOne({ email });
-
     if (user) {
-      return res.status(400).json({
-        error: "Perdoruesi ekziston",
-      });
+      return res.status(400).json({ error: "Perdoruesi ekziston" });
     }
+
+    // Delete old temporary user if exists
+    await PerdoruesPerkohshem.findOneAndDelete({ email });
 
     const perdoruesiPerkohshem = new PerdoruesPerkohshem({
       email,
@@ -32,65 +32,50 @@ router.post("/perdoruesi", async (req, res) => {
     });
 
     if (tipiPerdoruesit === "aplikant") {
-      if (!emri) {
-        return res.status(400).json({
-          error: "Nuk e keni shenuar emrin",
-        });
-      }
-      if (!mbiemri) {
-        return res.status(400).json({
-          error: "Nuk e keni shenuar mbiemrin",
-        });
-      }
-      if (!email) {
-        return res.status(400).json({
-          error: "Nuk e keni shenuar emailin",
-        });
-      }
-      if (!fjalekalimi) {
-        return res.status(400).json({
-          error: "Nuk e keni shenuar fjalekalimin",
-        });
-      }
-
+      if (!emri)
+        return res.status(400).json({ error: "Nuk e keni shenuar emrin" });
+      if (!mbiemri)
+        return res.status(400).json({ error: "Nuk e keni shenuar mbiemrin" });
+      if (!email)
+        return res.status(400).json({ error: "Nuk e keni shenuar emailin" });
+      if (!fjalekalimi)
+        return res
+          .status(400)
+          .json({ error: "Nuk e keni shenuar fjalekalimin" });
       perdoruesiPerkohshem.emri = emri;
       perdoruesiPerkohshem.mbiemri = mbiemri;
     } else if (tipiPerdoruesit === "punedhenes") {
-      if (!kompania) {
-        return res.status(400).json({
-          error: "Nuk e keni shenuar emrin e kompanise",
-        });
-      }
-      if (!email) {
-        return res.status(400).json({
-          error: "Nuk e keni shenuar emailin",
-        });
-      }
-      if (!fjalekalimi) {
-        return res.status(400).json({
-          error: "Nuk e keni shenuar fjalekalimin",
-        });
-      }
-
+      if (!kompania)
+        return res
+          .status(400)
+          .json({ error: "Nuk e keni shenuar emrin e kompanise" });
+      if (!email)
+        return res.status(400).json({ error: "Nuk e keni shenuar emailin" });
+      if (!fjalekalimi)
+        return res
+          .status(400)
+          .json({ error: "Nuk e keni shenuar fjalekalimin" });
       perdoruesiPerkohshem.kompania = kompania;
     } else {
-      return res.status(400).json({
-        success: false,
-        error: "Tipi nuk eshte zgjedhur ose ka ndodhur ndonje gabim!",
-      });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          error: "Tipi nuk eshte zgjedhur ose ka ndodhur ndonje gabim!",
+        });
     }
 
     await perdoruesiPerkohshem.save();
-    await perdoruesiPerkohshem.save();
     console.log("U ruajt, duke derguar email...");
+
     if (perdoruesiPerkohshem.emri) {
       await dergoKodin(email, emri, `Kodi juaj: ${kodiVerifikimit}`);
     }
-    console.log("Email u dergua");
-
     if (perdoruesiPerkohshem.kompania) {
       await dergoKodin(email, kompania, `Kodi juaj: ${kodiVerifikimit}`);
     }
+
+    console.log("Email u dergua");
 
     return res.status(200).json({
       success: true,
@@ -113,11 +98,16 @@ router.post("/verifiko", async (req, res) => {
 
     const perdoruesiPerkohshem = await PerdoruesPerkohshem.findOne({ email });
 
+    if (!perdoruesiPerkohshem) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Perdoruesi nuk u gjet" });
+    }
+
     if (perdoruesiPerkohshem.kodiVerifikimit !== kodi) {
-      return res.status(400).json({
-        success: false,
-        error: "Kodi eshte gabim",
-      });
+      return res
+        .status(400)
+        .json({ success: false, error: "Kodi eshte gabim" });
     }
 
     const perdorues = new Perdorues({
@@ -134,7 +124,6 @@ router.post("/verifiko", async (req, res) => {
     }
 
     const perdoruesiRuajtur = await perdorues.save();
-
     await PerdoruesPerkohshem.findOneAndDelete({ email });
 
     return res.status(200).json({
@@ -149,6 +138,32 @@ router.post("/verifiko", async (req, res) => {
       message: "Gabim i brendshem i serverit",
       error: error.message,
     });
+  }
+});
+
+router.post("/ridergokod", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const perdoruesiPerkohshem = await PerdoruesPerkohshem.findOne({ email });
+
+    if (!perdoruesiPerkohshem) {
+      return res.status(404).json({ error: "Perdoruesi nuk u gjet" });
+    }
+
+    const kodiVerifikimit = Math.floor(
+      100000 + Math.random() * 900000,
+    ).toString();
+    perdoruesiPerkohshem.kodiVerifikimit = kodiVerifikimit;
+    perdoruesiPerkohshem.skadimiKoditVerfikimit = Date.now() + 10 * 60 * 1000;
+    await perdoruesiPerkohshem.save();
+
+    const emri = perdoruesiPerkohshem.emri || perdoruesiPerkohshem.kompania;
+    await dergoKodin(email, emri, `Kodi juaj: ${kodiVerifikimit}`);
+
+    return res.status(200).json({ success: true, message: "Kodi u ridergua" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
   }
 });
 
