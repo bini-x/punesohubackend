@@ -81,9 +81,12 @@ router.post("/perdoruesi", async (req, res) => {
     }
 
     await perdoruesiPerkohshem.save();
+    await perdoruesiPerkohshem.save();
+    console.log("U ruajt, duke derguar email...");
     if (perdoruesiPerkohshem.emri) {
       await dergoKodin(email, emri, `Kodi juaj: ${kodiVerifikimit}`);
     }
+    console.log("Email u dergua");
 
     if (perdoruesiPerkohshem.kompania) {
       await dergoKodin(email, kompania, `Kodi juaj: ${kodiVerifikimit}`);

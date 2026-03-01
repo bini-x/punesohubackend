@@ -20,6 +20,8 @@ const layout = (content) => `
 `;
 
 const dergoKodin = async (email, emri, kodi) => {
+  console.log("Duke derguar email tek:", email);
+
   const html = layout(`
     <h2 style="color:#111827;margin-bottom:10px;">Verifikoni emailin</h2>
     <p style="color:#4b5563;font-size:15px;margin-bottom:30px;">
