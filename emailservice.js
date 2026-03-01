@@ -1,13 +1,7 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 require("dotenv").config();
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const layout = (content) => `
   <div style="background:#f4f6f8;padding:40px 0;font-family:Arial,Helvetica,sans-serif;">
@@ -43,8 +37,8 @@ const dergoKodin = async (email, emri, kodi) => {
     <p style="font-size:13px;color:#6b7280;">Kodi skadon pas 10 minutash</p>
   `);
 
-  await transporter.sendMail({
-    from: `"Punesohu" <${process.env.EMAIL}>`,
+  await resend.emails.send({
+    from: "Punesohu <onboarding@resend.dev>",
     to: email,
     subject: "Verifikoni emailin",
     html,
@@ -76,8 +70,8 @@ const dergoStatusin = async (
     ${mesazhShtese ? `<p style="color:#4b5563;font-size:15px;margin-bottom:30px;">${mesazhShtese}</p>` : ""}
   `);
 
-  await transporter.sendMail({
-    from: `"Punesohu" <${process.env.EMAIL}>`,
+  await resend.emails.send({
+    from: "Punesohu <onboarding@resend.dev>",
     to: email,
     subject: "Statusi i Aplikimit",
     html,
@@ -99,8 +93,8 @@ const dergoKonfirmimAplikimi = async (email, emri, puna, kompania) => {
     </p>
   `);
 
-  await transporter.sendMail({
-    from: `"Punesohu" <${process.env.EMAIL}>`,
+  await resend.emails.send({
+    from: "Punesohu <onboarding@resend.dev>",
     to: email,
     subject: "Aplikimi u dergua me sukses!",
     html,
@@ -121,8 +115,8 @@ ${mesazhi}
     </p>
   `);
 
-  await transporter.sendMail({
-    from: `"Punesohu" <${process.env.EMAIL}>`,
+  await resend.emails.send({
+    from: "Punesohu <onboarding@resend.dev>",
     to: email,
     subject: "Shpallja e punes eshte perditesuar",
     html,
@@ -140,8 +134,8 @@ const dergoMesazhin = async (email, emri, subject, mesazhi) => {
     </p>
   `);
 
-  await transporter.sendMail({
-    from: `"Punesohu" <${process.env.EMAIL}>`,
+  await resend.emails.send({
+    from: "Punesohu <onboarding@resend.dev>",
     to: email,
     subject: subject,
     html,
