@@ -38,7 +38,7 @@ const dergoKodin = async (email, emri, kodi) => {
   `);
 
   await resend.emails.send({
-    from: "Punesohu <onboarding@resend.dev>",
+    from: "Punesohu <noreply@punesohu.xyz>",
     to: email,
     subject: "Verifikoni emailin",
     html,
@@ -71,7 +71,7 @@ const dergoStatusin = async (
   `);
 
   await resend.emails.send({
-    from: "Punesohu <onboarding@resend.dev>",
+    from: "Punesohu <noreply@punesohu.xyz>",
     to: email,
     subject: "Statusi i Aplikimit",
     html,
@@ -94,7 +94,7 @@ const dergoKonfirmimAplikimi = async (email, emri, puna, kompania) => {
   `);
 
   await resend.emails.send({
-    from: "Punesohu <onboarding@resend.dev>",
+    from: "Punesohu <noreply@punesohu.xyz>",
     to: email,
     subject: "Aplikimi u dergua me sukses!",
     html,
@@ -116,7 +116,7 @@ ${mesazhi}
   `);
 
   await resend.emails.send({
-    from: "Punesohu <onboarding@resend.dev>",
+    from: "Punesohu <noreply@punesohu.xyz>",
     to: email,
     subject: "Shpallja e punes eshte perditesuar",
     html,
@@ -135,7 +135,7 @@ const dergoMesazhin = async (email, emri, subject, mesazhi) => {
   `);
 
   await resend.emails.send({
-    from: "Punesohu <onboarding@resend.dev>",
+    from: "Punesohu <noreply@punesohu.xyz>",
     to: email,
     subject: subject,
     html,
