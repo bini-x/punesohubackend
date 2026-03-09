@@ -18,7 +18,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://punesohu.onrender.com",
+    origin: "https://punesohu.xyz",
     credentials: true,
   }),
 );
