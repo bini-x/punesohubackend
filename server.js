@@ -26,16 +26,20 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
+app.set("trust proxy", 1);
+
+const MongoStore = require("connect-mongo");
+
 app.use(
   session({
     name: "connect.sid",
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
     cookie: {
-      httpOnly: true,
-      secure: false,
-      maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
+      sameSite: "none",
     },
   }),
 );
