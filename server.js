@@ -12,6 +12,8 @@ const kompaniteApi = require("./routes/kompaniteApi");
 const punetRuajturaApi = require("./routes/punetRuajturaApi");
 const aplikantetApi = require("./routes/aplikantetApi");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
+
 require("dotenv").config();
 
 const app = express();
@@ -27,8 +29,6 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 app.set("trust proxy", 1);
-
-const MongoStore = require("connect-mongo");
 
 app.use(
   session({
