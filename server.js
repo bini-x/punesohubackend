@@ -12,7 +12,7 @@ const kompaniteApi = require("./routes/kompaniteApi");
 const punetRuajturaApi = require("./routes/punetRuajturaApi");
 const aplikantetApi = require("./routes/aplikantetApi");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
+const { default: MongoStore } = require("connect-mongo");
 
 require("dotenv").config();
 
